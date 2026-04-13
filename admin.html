@@ -443,7 +443,6 @@ function clearFilters() {
     document.getElementById("filterStatus").value = "";
     filterSubmissions();
 }
-
 function renderCharts() {
     var submissions = JSON.parse(localStorage.getItem("submissions")) || [];
 
@@ -466,6 +465,68 @@ function renderCharts() {
     submissions.forEach(function(s) { classes[s.class] = (classes[s.class] || 0) + 1; });
     if (classChartInstance) classChartInstance.destroy();
     classChartInstance = new Chart(document.getElementById("classChart"), {
-        type: "do
-      
-       
+        type: "doughnut",
+        data: {
+            labels: Object.keys(classes),
+            datasets: [{ data: Object.values(classes),
+                backgroundColor: ["#ff914d","#6b5b95","#ff6f61","#ffc107"] }]
+        }
+    });
+
+    // Status chart
+    var approved = submissions.filter(function(s) { return s.status === "approved"; }).length;
+    var rejected = submissions.filter(function(s) { return s.status === "rejected"; }).length;
+    var pending  = submissions.filter(function(s) { return !s.status || s.status === "pending"; }).length;
+    if (statusChartInstance) statusChartInstance.destroy();
+    statusChartInstance = new Chart(document.getElementById("statusChart"), {
+        type: "pie",
+        data: {
+            labels: ["Approved", "Rejected", "Pending"],
+            datasets: [{ data: [approved, rejected, pending],
+                backgroundColor: ["#28a745","#dc3545","#ffc107"] }]
+        }
+    });
+}
+
+function toggleNotifications() {
+    var dropdown = document.getElementById("notifDropdown");
+    dropdown.style.display = dropdown.style.display === "block" ? "none" : "block";
+}
+
+function clearNotifications(event) {
+    event.stopPropagation();
+    var submissions = JSON.parse(localStorage.getItem("submissions")) || [];
+    var readList = submissions.map(function(s) { return s.regno + "_" + s.title; });
+    localStorage.setItem("adminReadList", JSON.stringify(readList));
+    document.getElementById("notifCount").style.display = "none";
+    document.getElementById("unreadCount").innerText = "0";
+    document.getElementById("notifList").innerHTML = "<p style='color:#999;'>No new notifications</p>";
+    document.getElementById("notifDropdown").style.display = "none";
+    showAdminPanel();
+}
+
+function scrollToCard(regno) {
+    var card = document.getElementById("card_" + regno);
+    if (card) {
+        card.scrollIntoView({ behavior: "smooth" });
+        card.style.border = "3px solid #ff3b2f";
+        setTimeout(function() { card.style.border = "2px solid #ff914d"; }, 2000);
+    }
+    document.getElementById("notifDropdown").style.display = "none";
+}
+
+document.addEventListener("click", function(e) {
+    var dropdown = document.getElementById("notifDropdown");
+    if (dropdown && !dropdown.contains(e.target)) {
+        dropdown.style.display = "none";
+    }
+});
+
+if (sessionStorage.getItem("isAdmin") === "true") showAdminPanel();
+
+setInterval(function() {
+    if (sessionStorage.getItem("isAdmin") === "true") showAdminPanel();
+}, 30000);
+</script>
+</body>
+</html>
