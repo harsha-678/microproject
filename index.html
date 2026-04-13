@@ -118,7 +118,20 @@
         </div>
 
     </div>
-
+<!-- STUDENT FILE CHECK ADDON -->
+<div style="margin-top:20px; border-top:2px dashed #ff914d; padding-top:15px;">
+    <p style="color:#6b5b95; font-weight:bold;">📂 Already Submitted? Check Your File</p>
+    <div class="form-group">
+        <input type="text" id="checkRegno" placeholder="Enter your Register Number">
+    </div>
+    <div class="form-group">
+        <input type="text" id="checkName" placeholder="Enter your Full Name">
+    </div>
+    <button onclick="checkMySubmission()" style="background:#6b5b95;">
+        🔍 View My Submission
+    </button>
+    <p id="checkError" style="color:red; font-size:13px;"></p>
+</div>
     <!-- View Submissions Link -->
     <br>
     <a href="submissions.html">View All Submissions</a>
@@ -412,6 +425,35 @@ downloadLink.style.display = "inline-block";
         console.error(err);
     }
 }
+    // ===================== CHECK MY SUBMISSION ADDON (added) =====================
+    function checkMySubmission() {
+        var regno = document.getElementById("checkRegno").value.trim();
+        var name = document.getElementById("checkName").value.trim().toLowerCase();
+
+        if (regno === "" || name === "") {
+            document.getElementById("checkError").innerText = "❌ Please enter both register number and name!";
+            return;
+        }
+
+        var submissions = JSON.parse(localStorage.getItem("submissions")) || [];
+        var found = null;
+
+        for (var i = submissions.length - 1; i >= 0; i--) {
+            if (submissions[i].regno === regno &&
+                submissions[i].name.toLowerCase() === name) {
+                found = submissions[i];
+                break;
+            }
+        }
+
+        if (!found) {
+            document.getElementById("checkError").innerText = "❌ Register number and name do not match!";
+            return;
+        }
+
+        sessionStorage.setItem("currentStudentRegno", regno);
+        window.location.href = "result.html";
+    }
 </script>
 
 </body>
