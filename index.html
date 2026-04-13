@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Microproject Submission Portal</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Comic+Neue:wght@700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+</head>
+<body>
+
+<div class="container">
+
+    <!-- College Header -->
+    <h2 class="college-name">CARMEL COLLEGE OF ENGINEERING AND TECHNOLOGY PUNNAPRA, ALAPPUZHA</h2>
+    <hr class="divider">
+
+    <!-- Portal Title -->
+    <h1 class="portal-title">🎨 Microproject Submission Portal 🎨</h1>
+    <p class="portal-subtitle">Fill your details and submit your microproject!</p>
+
+    <!-- Form in 2 columns -->
+    <div class="form-columns">
+
+        <div class="form-column">
+            <div class="form-group">
+                <label>Student Name</label>
+                <input type="text" id="name" placeholder="Enter your name">
+            </div>
+
+            <div class="form-group">
+                <label>Class</label>
+                <select id="class">
+                    <option value="">Select Class</option>
+                    <option>Ⅰ Year</option>
+                    <option>II Year</option>
+                    <option>III Year</option>
+                    <option>IV Year</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Faculty Name</label>
+                <input type="text" id="faculty" placeholder="Enter faculty name">
+            </div>
+
+            <div class="form-group">
+                <label>Upload File</label>
+                <input type="file" id="file"><!-- FILE SIZE COMPRESSOR ADDON (added) -->
+<div id="compressorDiv" style="display:none; margin-top:10px;">
+    <label id="compressorLabel">Compress as PDF (KB)</label>
+    <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+        <input type="number" id="targetKB" placeholder="Target size in KB" style="width:180px;">
+        <button type="button" onclick="applyCompress()" style="background:#6b5b95; width:auto; padding:8px 14px;">🗜️ Compress as PDF</button>
+    </div>
+    <p id="originalSize" style="color:#6b5b95; font-size:12px; margin-top:5px;"></p>
+    <p id="compressStatus" style="color:#ff6f61; font-size:12px;"></p>
+    <div id="compressPreviewBox" style="display:none; margin-top:8px;">
+        <p id="compressedSize" style="color:green; font-size:12px; font-weight:bold;"></p>
+    </div>
+</div>
+            </div>
+        </div>
+
+        <div class="form-column">
+            <div class="form-group">
+                <label>Register Number</label>
+                <input type="text" id="regno" placeholder="Enter your register number">
+            </div>
+
+            <div class="form-group">
+                <label>Department</label>
+                <select id="dept">
+                    <option value="">Select Department</option>
+                    <option>CSE</option>
+                    <option>CE</option>
+                    <option>EEE</option>
+                    <option>MECH</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Project Title</label>
+                <input type="text" id="title" placeholder="Enter project title">
+            </div>
+
+            <!-- Group Project Option -->
+            <div class="form-group">
+                <label>
+                    <input type="checkbox" id="isGroup" onclick="toggleGroupMembers()"> Group Project
+                </label>
+            </div>
+
+            <div class="form-group" id="groupMembersDiv" style="display:none;">
+                <label>Group Members (comma separated)</label>
+                <input type="text" id="groupMembers" placeholder="Enter names of group members">
+            </div>
+
+            <div class="form-group">
+                <button onclick="showMessage()">Submit Project</button>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- View Submissions Link -->
+    <br>
+    <a href="submissions.html">View All Submissions</a>
+
+</div>
+
+<!-- Footer -->
+<footer class="footer">
+    © 2026 Microproject Submission Portal
+</footer>
+<script>
+
+function toggleGroupMembers() {
+    var isGroup = document.getElementById("isGroup").checked;
+    document.getElementById("groupMembersDiv").style.display = isGroup ? "block" : "none";
+}
+
+function showMessage() {
+    var name = document.getElementById("name").value;
+    var regno = document.getElementById("regno").value;
+    var studentClass = document.getElementById("class").value;
+    var dept = document.getElementById("dept").value;
+    var faculty = document.getElementById("faculty").value;
+    var title = document.getElementById("title").value;
+    var fileInput = document.getElementById("file");
+    var file = fileInput.files[0];
+    var isGroup = document.getElementById("isGroup").checked;
+    var groupMembers = isGroup ? document.getElementById("groupMembers").value : "";
+
+    if(name === "" || regno === "" || studentClass === "" || dept === "" || faculty === "" || title === "" || !file) {
+        alert("Please fill all details!");
+        return;
+    }
+
+    if (window.compressedFileData) {
+        var submission = {
+            name, regno, class: studentClass, dept, faculty, title,
+            isGroup, groupMembers,
+            fileName: window.compressedFileName,
+            fileData: window.compressedFileData
+        };
+        var submissions = JSON.parse(localStorage.getItem("submissions")) || [];
+        submissions.push(submission);
+        localStorage.setItem("submissions", JSON.stringify(submissions));
+        alert("Project Submitted Successfully!");
+        window.location.href = "result.html";
+    } else {
+        var reader = new FileReader();
+        reader.onload = function() {
+            var submission = {
+                name, regno, class: studentClass, dept, faculty, title,
+                isGroup, groupMembers, fileName: file.name, fileData: reader.result
+            };
+            var submissions = JSON.parse(localStorage.getItem("submissions")) || [];
+            submissions.push(submission);
+            localStorage.setItem("submissions", JSON.stringify(submissions));
+            alert("Project Submitted Successfully!");
+            window.location.href = "result.html";
+        };
+        reader.readAsDataURL(file);
+    }
+}
+
+
+
+window.compressedFileData = null;
+window.compressedFileName = null;
+
+document.getElementById("file").addEventListener("change", function() {
+    var file = this.files[0];
+    window.compressedFileData = null;
+    window.compressedFileName = null;
+    document.getElementById("compressPreviewBox").style.display = "none";
+    document.getElementById("compressStatus").innerText = "";
+    document.getElementById("compressedSize").innerText = "";
+
+    if (file) {
+        document.getElementById("compressorDiv").style.display = "block";
+        var originalKB = Math.round(file.size / 1024);
+        document.getElementById("originalSize").innerText =
+            "📄 Original size: " + originalKB + " KB  |  Type: " + (file.type || "unknown");
+
+        if (file.type === "application/pdf") {
+            document.getElementById("compressorLabel").innerText = "📄 Compress PDF (KB)";
+            document.getElementById("targetKB").placeholder = "Target size in KB (< " + originalKB + ")";
+        } else {
+            document.getElementById("compressorLabel").innerText = "🔄 Convert to PDF & Compress (KB)";
+            document.getElementById("targetKB").placeholder = "Target size in KB after conversion";
+        }
+    } else {
+        document.getElementById("compressorDiv").style.display = "none";
+    }
+});
+
+
+async function imageToPdfAndCompress(file, targetKB) {
+    var arrayBuffer = await file.arrayBuffer();
+    var pdfDoc = await PDFLib.PDFDocument.create();
+
+    var imageBytes = new Uint8Array(arrayBuffer);
+    var embeddedImage;
+
+   
+    if (file.type === "image/png") {
+        embeddedImage = await pdfDoc.embedPng(imageBytes);
+    } else {
+        
+        var blob = new Blob([arrayBuffer], { type: file.type });
+        var url = URL.createObjectURL(blob);
+        var img = await new Promise(function(res) {
+            var i = new Image();
+            i.onload = function() { res(i); };
+            i.src = url;
+        });
+
+        var canvas = document.createElement("canvas");
+        canvas.width = img.width;
+        canvas.height = img.height;
+        canvas.getContext("2d").drawImage(img, 0, 0);
+        URL.revokeObjectURL(url);
+
+       
+        var quality = 0.92;
+        var jpegDataUrl = canvas.toDataURL("image/jpeg", quality);
+        var jpegKB = Math.round((jpegDataUrl.length * 3) / 4 / 1024);
+
+        while (jpegKB > targetKB * 1.2 && quality > 0.05) {
+            quality -= 0.05;
+            jpegDataUrl = canvas.toDataURL("image/jpeg", quality);
+            jpegKB = Math.round((jpegDataUrl.length * 3) / 4 / 1024);
+        }
+
+        var jpegBytes = Uint8Array.from(atob(jpegDataUrl.split(",")[1]), function(c) { return c.charCodeAt(0); });
+        embeddedImage = await pdfDoc.embedJpg(jpegBytes);
+    }
+
+    
+    var page = pdfDoc.addPage([embeddedImage.width, embeddedImage.height]);
+    page.drawImage(embeddedImage, {
+        x: 0,
+        y: 0,
+        width: embeddedImage.width,
+        height: embeddedImage.height,
+    });
+
+    var pdfBytes = await pdfDoc.save({ useObjectStreams: true });
+    return pdfBytes;
+}
+
+
+async function compressPdfBytes(arrayBuffer) {
+    var pdfDoc = await PDFLib.PDFDocument.load(new Uint8Array(arrayBuffer), { ignoreEncryption: true });
+    var pages = pdfDoc.getPages();
+    for (var i = 0; i < pages.length; i++) {
+        pages[i].node.normalize();
+    }
+    return await pdfDoc.save({ useObjectStreams: true, addDefaultPage: false });
+}
+
+
+async function textFileToPdf(file) {
+    var text = await file.text();
+    var pdfDoc = await PDFLib.PDFDocument.create();
+    var font = await pdfDoc.embedFont(PDFLib.StandardFonts.Helvetica);
+    var page = pdfDoc.addPage([595, 842]); // A4
+    var { width, height } = page.getSize();
+    var fontSize = 11;
+    var margin = 40;
+    var maxWidth = width - margin * 2;
+    var y = height - margin;
+    var lineHeight = fontSize + 4;
+
+    
+    var words = text.split(" ");
+    var line = "";
+    for (var i = 0; i < words.length; i++) {
+        var testLine = line + words[i] + " ";
+        var testWidth = font.widthOfTextAtSize(testLine, fontSize);
+        if (testWidth > maxWidth && line !== "") {
+            if (y < margin + lineHeight) {
+                page = pdfDoc.addPage([595, 842]);
+                y = height - margin;
+            }
+            page.drawText(line.trim(), { x: margin, y, size: fontSize, font });
+            line = words[i] + " ";
+            y -= lineHeight;
+        } else {
+            line = testLine;
+        }
+    }
+    if (line.trim()) {
+        page.drawText(line.trim(), { x: margin, y, size: fontSize, font });
+    }
+
+    return await pdfDoc.save({ useObjectStreams: true });
+}
+
+async function applyCompress() {
+    var file = document.getElementById("file").files[0];
+    if (!file) return;
+
+    var targetKB = parseInt(document.getElementById("targetKB").value);
+    var originalKB = Math.round(file.size / 1024);
+
+    if (!targetKB || targetKB <= 0) {
+        alert("Please enter a valid target size in KB!");
+        return;
+    }
+
+    document.getElementById("compressStatus").innerText = "⏳ Processing, please wait...";
+    document.getElementById("compressPreviewBox").style.display = "none";
+
+    try {
+        var pdfBytes;
+        var newFileName = file.name.replace(/\.[^/.]+$/, "") + ".pdf";
+
+        if (file.type === "application/pdf") {
+            // Already PDF — just compress
+            var arrayBuffer = await file.arrayBuffer();
+            pdfBytes = await compressPdfBytes(arrayBuffer);
+
+        } else if (file.type.startsWith("image/")) {
+           
+            document.getElementById("compressStatus").innerText = "🖼️ Converting image to PDF...";
+            pdfBytes = await imageToPdfAndCompress(file, targetKB);
+
+        } else if (file.type === "text/plain" || file.type === "text/csv" || file.name.endsWith(".txt") || file.name.endsWith(".csv")) {
+          
+            document.getElementById("compressStatus").innerText = "📝 Converting text file to PDF...";
+            pdfBytes = await textFileToPdf(file);
+
+        } else {
+          
+            document.getElementById("compressStatus").innerText =
+                "⚠️ This file type (" + (file.type || file.name.split('.').pop()) + ") cannot be converted in the browser. Please upload a PDF, image, or text file.";
+            return;
+        }
+
+        var resultKB = Math.round(pdfBytes.length / 1024);
+
+       
+        var base64 = btoa(
+            new Uint8Array(pdfBytes).reduce(function(data, byte) {
+                return data + String.fromCharCode(byte);
+            }, "")
+        );
+        var dataUrl = "data:application/pdf;base64," + base64;
+
+        window.compressedFileData = dataUrl;
+        window.compressedFileName = newFileName;
+
+        document.getElementById("compressStatus").innerText = "";
+        document.getElementById("compressPreviewBox").style.display = "block";
+
+        var msg = "";
+        if (file.type !== "application/pdf") {
+            msg = "✅ Converted & saved as PDF: " + newFileName + " (~" + resultKB + " KB)";
+        } else if (resultKB < originalKB) {
+            msg = "✅ PDF compressed: " + originalKB + " KB → " + resultKB + " KB (saved " + (originalKB - resultKB) + " KB)";
+        } else {
+            msg = "⚠️ PDF is already well-compressed. Size: " + resultKB + " KB (original will be used)";
+            window.compressedFileData = null;
+            window.compressedFileName = null;
+        }
+        document.getElementById("compressedSize").innerText = msg;
+
+    } catch (err) {
+        document.getElementById("compressStatus").innerText = "❌ Error: " + err.message;
+        console.error(err);
+    }
+}
+</script>
+
+</body>
+</html>
