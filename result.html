@@ -3,6 +3,19 @@
 <head>
     <title>Submission Details</title>
     <link rel="stylesheet" href="style.css">
+    <style>
+        .status-badge {
+            display: inline-block;
+            padding: 6px 18px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 15px;
+            margin-top: 8px;
+        }
+        .status-pending  { background:#fff3cd; color:#856404; border:2px solid #ffc107; }
+        .status-approved { background:#d4edda; color:#155724; border:2px solid #28a745; }
+        .status-rejected { background:#f8d7da; color:#721c24; border:2px solid #dc3545; }
+    </style>
 </head>
 <body>
 <div class="container">
@@ -29,6 +42,16 @@ var content = document.getElementById("resultContent");
 if (!mySubmission) {
     content.innerHTML = "<p style='color:red;'>No submission found. Please go back and submit again.</p>";
 } else {
+    // Approval status badge
+    var status = mySubmission.status || "pending";
+    var badgeClass = "status-" + status;
+    var badgeText = status === "pending" ? "⏳ Pending Review"
+                  : status === "approved" ? "✅ Approved"
+                  : "❌ Rejected";
+
+    var adminRemark = mySubmission.remark
+        ? `<p><strong>📝 Admin Remark:</strong> ${mySubmission.remark}</p>` : "";
+
     content.innerHTML = `
         <p><strong>Student Name:</strong> ${mySubmission.name}</p>
         <p><strong>Register No:</strong> ${mySubmission.regno}</p>
@@ -37,6 +60,12 @@ if (!mySubmission) {
         <p><strong>Faculty:</strong> ${mySubmission.faculty}</p>
         <p><strong>Project Title:</strong> ${mySubmission.title}</p>
         ${mySubmission.isGroup ? `<p><strong>Group Members:</strong> ${mySubmission.groupMembers}</p>` : ""}
+
+        <p><strong>📋 Submission Status:</strong><br>
+            <span class="status-badge ${badgeClass}">${badgeText}</span>
+        </p>
+        ${adminRemark}
+
         <hr>
         <p><strong>📎 Your Submitted File:</strong></p>
         ${
@@ -54,3 +83,4 @@ if (!mySubmission) {
 </script>
 </body>
 </html>
+
