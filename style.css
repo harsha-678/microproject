@@ -1,0 +1,98 @@
+/* Fun fonts & background */
+body {
+    font-family: 'Comic Neue', cursive;
+    background: linear-gradient(120deg, #ffecd2, #fcb69f);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+}
+
+/* Container */
+.container {
+    background: #fff3e6;
+    padding: 40px;
+    border-radius: 25px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+    width: 850px;
+    text-align: center;
+}
+
+/* Headings */
+.college-name {
+    color: #ff6f61;
+    font-size: 20px;
+}
+
+.portal-title {
+    font-size: 32px;
+    color: #ff914d;
+}
+
+.portal-subtitle {
+    font-size: 16px;
+    color: #6b5b95;
+}
+
+/* Form columns */
+.form-columns {
+    display: flex;
+    gap: 25px;
+    justify-content: center;
+    margin-top: 25px;
+}
+
+.form-column {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+/* Inputs & Buttons */
+input, select, button {
+    width: 100%;
+    padding: 12px;
+    border-radius: 15px;
+    border: 2px solid #ff914d;
+    font-size: 14px;
+    outline: none;
+    box-shadow: 2px 2px 6px rgba(0,0,0,0.2);
+}
+
+/* Focus effect */
+input:focus, select:focus {
+    border-color: #ff6f61;
+    box-shadow: 0 0 5px #ff6f61;
+}
+
+/* Button */
+button {
+    background-color: #ff6f61;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+button:hover {
+    background-color: #ff3b2f;
+}
+
+/* Link */
+a {
+    color: #ff914d;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+/* Footer */
+.footer {
+    text-align: center;
+    margin-top: 20px;
+    color: #ff6f61;
+}

@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Microproject Submission Portal</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Comic+Neue:wght@700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<div class="container">
+
+    <!-- College Header -->
+    <h2 class="college-name">CARMEL COLLEGE OF ENGINEERING AND TECHNOLOGY PUNNAPRA, ALAPPUZHA</h2>
+    <hr class="divider">
+
+    <!-- Portal Title -->
+    <h1 class="portal-title">🎨 Microproject Submission Portal 🎨</h1>
+    <p class="portal-subtitle">Fill your details and submit your microproject!</p>
+
+    <!-- Form in 2 columns -->
+    <div class="form-columns">
+
+        <div class="form-column">
+            <div class="form-group">
+                <label>Student Name</label>
+                <input type="text" id="name" placeholder="Enter your name">
+            </div>
+
+            <div class="form-group">
+                <label>Class</label>
+                <select id="class">
+                    <option value="">Select Class</option>
+                    <option>Ⅰ Year</option>
+                    <option>II Year</option>
+                    <option>III Year</option>
+                    <option>IV Year</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Faculty Name</label>
+                <input type="text" id="faculty" placeholder="Enter faculty name">
+            </div>
+
+            <div class="form-group">
+                <label>Upload File</label>
+                <input type="file" id="file"><!-- FILE SIZE COMPRESSOR ADDON (added) -->
+<div id="compressorDiv" style="display:none; margin-top:10px;">
+    <label>Compress Image Size (KB)</label>
+    <div style="display:flex; gap:8px; align-items:center;">
+        <input type="number" id="targetKB" placeholder="Target size in KB" style="width:180px;">
+        <button type="button" onclick="applyCompress()" style="background:#6b5b95; width:auto; padding:8px 14px;">🗜️ Compress</button>
+    </div>
+    <p id="originalSize" style="color:#6b5b95; font-size:12px;"></p>
+    <div id="compressPreviewBox" style="display:none; margin-top:8px;">
+        <label>Preview:</label><br>
+        <img id="compressPreviewImg" style="max-width:100%; border-radius:10px; border:2px solid #ff914d; margin-top:5px;">
+        <p id="compressedSize" style="color:green; font-size:12px; font-weight:bold;"></p>
+    </div>
+</div>
+            </div>
+        </div>
+
+        <div class="form-column">
+            <div class="form-group">
+                <label>Register Number</label>
+                <input type="text" id="regno" placeholder="Enter your register number">
+            </div>
+
+            <div class="form-group">
+                <label>Department</label>
+                <select id="dept">
+                    <option value="">Select Department</option>
+                    <option>CSE</option>
+                    <option>CE</option>
+                    <option>EEE</option>
+                    <option>MECH</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Project Title</label>
+                <input type="text" id="title" placeholder="Enter project title">
+            </div>
+
+            <!-- Group Project Option -->
+            <div class="form-group">
+                <label>
+                    <input type="checkbox" id="isGroup" onclick="toggleGroupMembers()"> Group Project
+                </label>
+            </div>
+
+            <div class="form-group" id="groupMembersDiv" style="display:none;">
+                <label>Group Members (comma separated)</label>
+                <input type="text" id="groupMembers" placeholder="Enter names of group members">
+            </div>
+
+            <div class="form-group">
+                <button onclick="showMessage()">Submit Project</button>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- View Submissions Link -->
+    <br>
+    <a href="submissions.html">View All Submissions</a>
+
+</div>
+
+<!-- Footer -->
+<footer class="footer">
+    © 2026 Microproject Submission Portal
+</footer>
+
+<script>
+
+function toggleGroupMembers() {
+    var isGroup = document.getElementById("isGroup").checked;
+    document.getElementById("groupMembersDiv").style.display = isGroup ? "block" : "none";
+}
+
+function showMessage() {
+    var name = document.getElementById("name").value;
+    var regno = document.getElementById("regno").value;
+    var studentClass = document.getElementById("class").value;
+    var dept = document.getElementById("dept").value;
+    var faculty = document.getElementById("faculty").value;
+    var title = document.getElementById("title").value;
+    var fileInput = document.getElementById("file");
+    var file = fileInput.files[0];
+    var isGroup = document.getElementById("isGroup").checked;
+    var groupMembers = isGroup ? document.getElementById("groupMembers").value : "";
+
+    if(name === "" || regno === "" || studentClass === "" || dept === "" || faculty === "" || title === "" || !file) {
+        alert("Please fill all details!");
+        return;
+    }
+
+    // ADDON: Use compressed data if available, else read original file
+    if (window.compressedFileData) {
+        var submission = {
+            name, regno, class: studentClass, dept, faculty, title,
+            isGroup, groupMembers,
+            fileName: file.name,
+            fileData: window.compressedFileData
+        };
+        var submissions = JSON.parse(localStorage.getItem("submissions")) || [];
+        submissions.push(submission);
+        localStorage.setItem("submissions", JSON.stringify(submissions));
+        alert("Project Submitted Successfully!");
+        window.location.href = "result.html";
+    } else {
+        var reader = new FileReader();
+        reader.onload = function() {
+            var submission = {
+                name, regno, class: studentClass, dept, faculty, title,
+                isGroup, groupMembers, fileName: file.name, fileData: reader.result
+            };
+            var submissions = JSON.parse(localStorage.getItem("submissions")) || [];
+            submissions.push(submission);
+            localStorage.setItem("submissions", JSON.stringify(submissions));
+            alert("Project Submitted Successfully!");
+            window.location.href = "result.html";
+        };
+        reader.readAsDataURL(file);
+    }
+}
+
+
+
+window.compressedFileData = null;
+
+
+document.getElementById("file").addEventListener("change", function() {
+    var file = this.files[0];
+    window.compressedFileData = null;
+    document.getElementById("compressPreviewBox").style.display = "none";
+
+    if (file && file.type.startsWith("image/")) {
+        document.getElementById("compressorDiv").style.display = "block";
+        var originalKB = Math.round(file.size / 1024);
+        document.getElementById("originalSize").innerText = "Original size: " + originalKB + " KB";
+        document.getElementById("targetKB").placeholder = "Target size in KB (max " + originalKB + ")";
+    } else {
+        document.getElementById("compressorDiv").style.display = "none";
+    }
+});
+
+
+function applyCompress() {
+    var file = document.getElementById("file").files[0];
+    if (!file) return;
+
+    var targetKB = parseInt(document.getElementById("targetKB").value);
+    if (!targetKB || targetKB <= 0) {
+        alert("Please enter a valid target size in KB!");
+        return;
+    }
+
+    var originalKB = Math.round(file.size / 1024);
+    if (targetKB >= originalKB) {
+        alert("Target KB must be less than original size (" + originalKB + " KB)!");
+        return;
+    }
+
+    var reader = new FileReader();
+    reader.onload = function(e) {
+        var img = new Image();
+        img.onload = function() {
+            var canvas = document.createElement("canvas");
+            canvas.width = img.width;
+            canvas.height = img.height;
+            var ctx = canvas.getContext("2d");
+            ctx.drawImage(img, 0, 0);
+
+            var quality = 0.9;
+            var result = canvas.toDataURL("image/jpeg", quality);
+            var resultKB = Math.round((result.length * 3) / 4 / 1024);
+
+           
+            while (resultKB > targetKB && quality > 0.05) {
+                quality -= 0.05;
+                result = canvas.toDataURL("image/jpeg", quality);
+                resultKB = Math.round((result.length * 3) / 4 / 1024);
+            }
+
+            window.compressedFileData = result;
+
+           
+            document.getElementById("compressPreviewImg").src = result;
+            document.getElementById("compressedSize").innerText =
+                "✅ Compressed to: ~" + resultKB + " KB (quality: " + Math.round(quality * 100) + "%)";
+            document.getElementById("compressPreviewBox").style.display = "block";
+        };
+        img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+}
+</script>
+
+</body>
+</html>
