@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Admin Panel</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .notification-bell {
+            position: relative;
+            display: inline-block;
+            font-size: 28px;
+            cursor: pointer;
+            margin-bottom: 10px;
+        }
+        .notif-count {
+            position: absolute;
+            top: -8px;
+            right: -10px;
+            background: red;
+            color: white;
+            border-radius: 50%;
+            padding: 2px 7px;
+            font-size: 12px;
+            font-weight: bold;
+            display: none;
+        }
+        .notif-dropdown {
+            display: none;
+            position: absolute;
+            background: white;
+            border: 2px solid #ff914d;
+            border-radius: 10px;
+            padding: 10px;
+            width: 280px;
+            z-index: 999;
+            left: 0;
+            top: 40px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            text-align: left;
+            font-size: 13px;
+        }
+        .notif-item {
+            padding: 6px 0;
+            border-bottom: 1px solid #ffe0cc;
+            color: #333;
+        }
+        .notif-item:last-child { border-bottom: none; }
+        .card {
+            background: #fff3e6;
+            border: 2px solid #ff914d;
+            border-radius: 15px;
+            padding: 15px 20px;
+            margin: 15px 0;
+            text-align: left;
+        }
+        .card p { margin: 5px 0; }
+        .badge {
+            background: #ff914d;
+            color: white;
+            border-radius: 10px;
+            padding: 2px 10px;
+            font-size: 12px;
+            margin-left: 8px;
+        }
+        .clear-btn {
+            background: #ff3b2f;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            padding: 5px 12px;
+            cursor: pointer;
+            font-size: 12px;
+            margin-top: 8px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+
+    <!-- LOGIN SECTION -->
+    <div id="loginSection">
+        <h1>🔐 Admin Login</h1>
+        <p style="color:#6b5b95;">Only admins can access this panel.</p>
+        <div class="form-group" style="max-width:300px; margin:auto;">
+            <label>Username</label>
+            <input type="text" id="adminUser" placeholder="Enter username">
+        </div>
+        <div class="form-group" style="max-width:300px; margin:auto; margin-top:10px;">
+            <label>Password</label>
+            <input type="password" id="adminPass" placeholder="Enter password">
+        </div>
+        <p id="loginError" style="color:red; font-size:13px;"></p>
+        <button onclick="adminLogin()" style="max-width:200px; margin:15px auto; display:block;">
+            🔓 Login
+        </button>
+        <br>
+        <a href="index.html">Back to Portal</a>
+    </div>
+
+    <!-- ADMIN PANEL (hidden until login) -->
+    <div id="adminSection" style="display:none;">
+
+        <!-- Top bar -->
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap;">
+            <h1 style="margin:0;">📋 Admin Panel</h1>
+            <div style="display:flex; align-items:center; gap:15px;">
+
+                <!-- Notification Bell -->
+                <div class="notification-bell" onclick="toggleNotifications()">
+                    🔔
+                    <span class="notif-count" id="notifCount">0</span>
+                    <div class="notif-dropdown" id="notifDropdown">
+                        <strong>🔔 New Submissions</strong>
+                        <br>
+                        <div id="notifList"><p style="color:#999;">No new notifications</p></div>
+                        <button class="clear-btn" onclick="clearNotifications(event)">✅ Mark all as read</button>
+                    </div>
+                </div>
+
+                <button onclick="adminLogout()" style="background:#ff3b2f; width:auto; padding:8px 16px;">
+                    🔒 Logout
+                </button>
+            </div>
+        </div>
+
+        <hr>
+
+        <!-- Stats -->
+        <div style="display:flex; gap:15px; justify-content:center; flex-wrap:wrap; margin:15px 0;">
+            <div style="background:#ff914d; color:white; border-radius:15px; padding:15px 30px; font-size:18px; font-weight:bold;">
+                📁 Total Submissions<br>
+                <span id="totalCount" style="font-size:32px;">0</span>
+            </div>
+            <div style="background:#6b5b95; color:white; border-radius:15px; padding:15px 30px; font-size:18px; font-weight:bold;">
+                🔔 Unread<br>
+                <span id="unreadCount" style="font-size:32px;">0</span>
+            </div>
+        </div>
+
+        <!-- Submissions list -->
+        <div id="output"></div>
+
+        <br>
+        <a href="index.html">Back to Portal</a>
+    </div>
+
+</div>
+
+<script>
+// ===== CHANGE ADMIN CREDENTIALS HERE =====
+var ADMIN_USERNAME = "admin";
+var ADMIN_PASSWORD = "carmel123";
+// =========================================
+
+function adminLogin() {
+    var user = document.getElementById("adminUser").value.trim();
+    var pass = document.getElementById("adminPass").value.trim();
+
+    if (user === ADMIN_USERNAME && pass === ADMIN_PASSWORD) {
+        sessionStorage.setItem("isAdmin", "true");
+        showAdminPanel();
+    } else {
+        document.getElementById("loginError").innerText = "❌ Invalid username or password!";
+    }
+}
+
+function adminLogout() {
+    sessionStorage.removeItem("isAdmin");
+    document.getElementById("adminSection").style.display = "none";
+    document.getElementById("loginSection").style.display = "block";
+    document.getElementById("adminUser").value = "";
+    document.getElementById("adminPass").value = "";
+}
+
+function showAdminPanel() {
+    document.getElementById("loginSection").style.display = "none";
+    document.getElementById("adminSection").style.display = "block";
+
+    var submissions = JSON.parse(localStorage.getItem("submissions")) || [];
+    var readList = JSON.parse(localStorage.getItem("adminReadList")) || [];
+
+    // Stats
+    document.getElementById("totalCount").innerText = submissions.length;
+    var unread = submissions.filter(function(s) {
+        return !readList.includes(s.regno + "_" + s.title);
+    });
+    document.getElementById("unreadCount").innerText = unread.length;
+
+    // Notification bell count
+    var notifCountEl = document.getElementById("notifCount");
+    if (unread.length > 0) {
+        notifCountEl.style.display = "inline";
+        notifCountEl.innerText = unread.length;
+    } else {
+        notifCountEl.style.display = "none";
+    }
+
+    // Notification dropdown list
+    var notifList = document.getElementById("notifList");
+    if (unread.length === 0) {
+        notifList.innerHTML = "<p style='color:#999;'>No new notifications</p>";
+    } else {
+        notifList.innerHTML = "";
+        unread.forEach(function(s) {
+            notifList.innerHTML += `
+                <div class="notif-item">
+                    📌 <strong>${s.name}</strong> (${s.regno})<br>
+                    <span style="color:#ff914d;">${s.title}</span>
+                </div>
+            `;
+        });
+    }
+
+    // Render all submissions
+    var outputDiv = document.getElementById("output");
+    if (submissions.length === 0) {
+        outputDiv.innerHTML = "<p>No submissions yet.</p>";
+    } else {
+        outputDiv.innerHTML = "";
+        // Show newest first
+        var reversed = submissions.slice().reverse();
+        reversed.forEach(function(item, index) {
+            var key = item.regno + "_" + item.title;
+            var isNew = !readList.includes(key);
+            outputDiv.innerHTML += `
+                <div class="card">
+                    ${isNew ? '<span class="badge">🆕 New</span>' : ''}
+                    <p><strong>#${submissions.length - index} &nbsp; ${item.name}</strong></p>
+                    <p><strong>Register No:</strong> ${item.regno}</p>
+                    <p><strong>Class:</strong> ${item.class} &nbsp;|&nbsp; <strong>Dept:</strong> ${item.dept}</p>
+                    <p><strong>Faculty:</strong> ${item.faculty}</p>
+                    <p><strong>Project:</strong> ${item.title}</p>
+                    ${item.isGroup ? `<p><strong>Group Members:</strong> ${item.groupMembers}</p>` : ""}
+                    <p><strong>📎 File:</strong>
+                        <a href="${item.fileData}" download="${item.fileName}">⬇️ ${item.fileName}</a>
+                    </p>
+                    <p><strong>👁️ Preview:</strong></p>
+                    ${
+                        item.fileData.startsWith("data:image/")
+                        ? `<img src="${item.fileData}" style="max-width:100%; border-radius:10px; border:2px solid #ff914d; margin-top:5px;">`
+                        : `<iframe src="${item.fileData}" style="width:100%; height:300px; border-radius:10px; border:2px solid #ff914d;" frameborder="0"></iframe>`
+                    }
+                </div>
+            `;
+        });
+    }
+}
+
+function toggleNotifications() {
+    var dropdown = document.getElementById("notifDropdown");
+    dropdown.style.display = dropdown.style.display === "block" ? "none" : "block";
+}
+
+function clearNotifications(event) {
+    event.stopPropagation();
+    var submissions = JSON.parse(localStorage.getItem("submissions")) || [];
+    var readList = submissions.map(function(s) { return s.regno + "_" + s.title; });
+    localStorage.setItem("adminReadList", JSON.stringify(readList));
+
+    document.getElementById("notifCount").style.display = "none";
+    document.getElementById("unreadCount").innerText = "0";
+    document.getElementById("notifList").innerHTML = "<p style='color:#999;'>No new notifications</p>";
+    document.getElementById("notifDropdown").style.display = "none";
+
+    // Reload to remove 🆕 badges
+    showAdminPanel();
+}
+
+// Close dropdown when clicking outside
+document.addEventListener("click", function(e) {
+    var dropdown = document.getElementById("notifDropdown");
+    if (dropdown && !dropdown.contains(e.target)) {
+        dropdown.style.display = "none";
+    }
+});
+
+// Auto-login if session active
+if (sessionStorage.getItem("isAdmin") === "true") {
+    showAdminPanel();
+}
+
+// Auto-refresh every 30 seconds to catch new submissions
+setInterval(function() {
+    if (sessionStorage.getItem("isAdmin") === "true") {
+        showAdminPanel();
+    }
+}, 30000);
+</script>
+
+</body>
+</html>
