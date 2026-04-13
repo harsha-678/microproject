@@ -180,16 +180,23 @@ function showAdminPanel() {
 
     // Stats
     document.getElementById("totalCount").innerText = submissions.length;
+
+    // Find unread submissions
     var unread = submissions.filter(function(s) {
         return !readList.includes(s.regno + "_" + s.title);
     });
+
     document.getElementById("unreadCount").innerText = unread.length;
 
-    // Notification bell count
+    // Notification bell
     var notifCountEl = document.getElementById("notifCount");
     if (unread.length > 0) {
         notifCountEl.style.display = "inline";
         notifCountEl.innerText = unread.length;
+
+        // Play a sound when there are unread notifications
+        var audio = new Audio("https://www.soundjay.com/buttons/sounds/button-09.mp3");
+        audio.play().catch(function() {}); // catch if browser blocks autoplay
     } else {
         notifCountEl.style.display = "none";
     }
@@ -202,9 +209,10 @@ function showAdminPanel() {
         notifList.innerHTML = "";
         unread.forEach(function(s) {
             notifList.innerHTML += `
-                <div class="notif-item">
+                <div class="notif-item" onclick="scrollToSubmission('${s.regno}')">
                     📌 <strong>${s.name}</strong> (${s.regno})<br>
-                    <span style="color:#ff914d;">${s.title}</span>
+                    <span style="color:#ff914d;">${s.title}</span><br>
+                    <span style="color:#999; font-size:11px;">🏛️ ${s.dept} | ${s.class}</span>
                 </div>
             `;
         });
@@ -216,13 +224,12 @@ function showAdminPanel() {
         outputDiv.innerHTML = "<p>No submissions yet.</p>";
     } else {
         outputDiv.innerHTML = "";
-        // Show newest first
         var reversed = submissions.slice().reverse();
         reversed.forEach(function(item, index) {
             var key = item.regno + "_" + item.title;
             var isNew = !readList.includes(key);
             outputDiv.innerHTML += `
-                <div class="card">
+                <div class="card" id="card_${item.regno}">
                     ${isNew ? '<span class="badge">🆕 New</span>' : ''}
                     <p><strong>#${submissions.length - index} &nbsp; ${item.name}</strong></p>
                     <p><strong>Register No:</strong> ${item.regno}</p>
@@ -245,6 +252,18 @@ function showAdminPanel() {
     }
 }
 
+// Scroll to specific submission when clicking notification
+function scrollToSubmission(regno) {
+    var card = document.getElementById("card_" + regno);
+    if (card) {
+        card.scrollIntoView({ behavior: "smooth" });
+        card.style.border = "3px solid #ff3b2f";
+        setTimeout(function() {
+            card.style.border = "2px solid #ff914d";
+        }, 2000);
+    }
+    document.getElementById("notifDropdown").style.display = "none";
+}
 function toggleNotifications() {
     var dropdown = document.getElementById("notifDropdown");
     dropdown.style.display = dropdown.style.display === "block" ? "none" : "block";
