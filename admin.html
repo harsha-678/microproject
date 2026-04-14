@@ -5,135 +5,47 @@
     <link rel="stylesheet" href="style.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
     <style>
-        .notification-bell {
-            position: relative;
-            display: inline-block;
-            font-size: 28px;
-            cursor: pointer;
-        }
-        .notif-count {
-            position: absolute;
-            top: -8px; right: -10px;
-            background: red;
-            color: white;
-            border-radius: 50%;
-            padding: 2px 7px;
-            font-size: 12px;
-            font-weight: bold;
-            display: none;
-        }
-        .notif-dropdown {
-            display: none;
-            position: absolute;
-            background: white;
-            border: 2px solid #ff914d;
-            border-radius: 10px;
-            padding: 10px;
-            width: 280px;
-            z-index: 999;
-            left: 0; top: 40px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-            text-align: left;
-            font-size: 13px;
-        }
-        .notif-item {
-            padding: 6px 0;
-            border-bottom: 1px solid #ffe0cc;
-            color: #333;
-            cursor: pointer;
-        }
-        .notif-item:last-child { border-bottom: none; }
-        .card {
-            background: #fff3e6;
-            border: 2px solid #ff914d;
-            border-radius: 15px;
-            padding: 15px 20px;
-            margin: 15px 0;
-            text-align: left;
-            transition: 0.3s;
-        }
-        .card p { margin: 5px 0; }
-        .badge {
-            background: #ff914d;
-            color: white;
-            border-radius: 10px;
-            padding: 2px 10px;
-            font-size: 12px;
-        }
-        .clear-btn {
-            background: #ff3b2f;
-            color: white;
-            border: none;
-            border-radius: 10px;
-            padding: 5px 12px;
-            cursor: pointer;
-            font-size: 12px;
-            margin-top: 8px;
-        }
+        .notification-bell { position:relative; display:inline-block; font-size:28px; cursor:pointer; }
+        .notif-count { position:absolute; top:-8px; right:-10px; background:red; color:white; border-radius:50%; padding:2px 7px; font-size:12px; font-weight:bold; display:none; }
+        .notif-dropdown { display:none; position:absolute; background:white; border:2px solid #ff914d; border-radius:10px; padding:10px; width:280px; z-index:999; left:0; top:40px; box-shadow:0 4px 12px rgba(0,0,0,0.2); text-align:left; font-size:13px; }
+        .notif-item { padding:6px 0; border-bottom:1px solid #ffe0cc; color:#333; cursor:pointer; }
+        .card { background:#fff3e6; border:2px solid #ff914d; border-radius:15px; padding:15px 20px; margin:15px 0; text-align:left; transition:0.3s; }
+        .card p { margin:5px 0; }
+        .badge { background:#ff914d; color:white; border-radius:10px; padding:2px 10px; font-size:12px; }
         .status-pending  { background:#fff3cd; color:#856404; border:2px solid #ffc107; border-radius:10px; padding:3px 10px; font-size:12px; }
         .status-approved { background:#d4edda; color:#155724; border:2px solid #28a745; border-radius:10px; padding:3px 10px; font-size:12px; }
         .status-rejected { background:#f8d7da; color:#721c24; border:2px solid #dc3545; border-radius:10px; padding:3px 10px; font-size:12px; }
-        .action-btn {
-            border: none;
-            border-radius: 10px;
-            padding: 6px 14px;
-            cursor: pointer;
-            font-size: 13px;
-            font-weight: bold;
-            margin: 3px;
-        }
+        .action-btn { border:none; border-radius:10px; padding:6px 14px; cursor:pointer; font-size:13px; font-weight:bold; margin:3px; }
         .approve-btn { background:#28a745; color:white; }
         .reject-btn  { background:#dc3545; color:white; }
         .delete-btn  { background:#ff3b2f; color:white; }
-        .search-bar {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-            margin: 15px 0;
-            align-items: center;
-        }
-        .search-bar input, .search-bar select {
-            padding: 8px 12px;
-            border-radius: 10px;
-            border: 2px solid #ff914d;
-            font-size: 13px;
-            outline: none;
-        }
-        .chart-row {
-            display: flex;
-            gap: 20px;
-            justify-content: center;
-            flex-wrap: wrap;
-            margin: 20px 0;
-        }
-        .chart-box {
-            background: white;
-            border: 2px solid #ff914d;
-            border-radius: 15px;
-            padding: 15px;
-            width: 320px;
-        }
-        .tab-btn {
-            padding: 8px 20px;
-            border-radius: 10px;
-            border: 2px solid #ff914d;
-            background: white;
-            cursor: pointer;
-            font-size: 13px;
-            font-weight: bold;
-            margin: 3px;
-        }
-        .tab-btn.active { background: #ff914d; color: white; }
-        .remark-input {
-            width: 100%;
-            padding: 6px 10px;
-            border-radius: 8px;
-            border: 1px solid #ff914d;
-            font-size: 12px;
-            margin-top: 5px;
-            box-sizing: border-box;
-        }
+        .search-bar  { display:flex; gap:10px; flex-wrap:wrap; margin:15px 0; align-items:center; }
+        .search-bar input, .search-bar select { padding:8px 12px; border-radius:10px; border:2px solid #ff914d; font-size:13px; outline:none; }
+        .chart-row  { display:flex; gap:20px; justify-content:center; flex-wrap:wrap; margin:20px 0; }
+        .chart-box  { background:white; border:2px solid #ff914d; border-radius:15px; padding:15px; width:300px; }
+        .tab-btn    { padding:8px 20px; border-radius:10px; border:2px solid #ff914d; background:white; cursor:pointer; font-size:13px; font-weight:bold; margin:3px; }
+        .tab-btn.active { background:#ff914d; color:white; }
+        .remark-input { width:100%; padding:6px 10px; border-radius:8px; border:1px solid #ff914d; font-size:12px; margin-top:5px; box-sizing:border-box; }
+        .clear-btn { background:#ff3b2f; color:white; border:none; border-radius:10px; padding:5px 12px; cursor:pointer; font-size:12px; margin-top:8px; }
     </style>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+        import { getFirestore, collection, getDocs, doc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCJ7PcLTBZNTm64m9ep8pGP9o0KB6GHWQA",
+            authDomain: "submission-portal-689e6.firebaseapp.com",
+            projectId: "submission-portal-689e6",
+            storageBucket: "submission-portal-689e6.firebasestorage.app",
+            messagingSenderId: "608950305112",
+            appId: "1:608950305112:web:4e591e1168d7685216a52d"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        window.db = db;
+        window.firestoreModules = { collection, getDocs, doc, updateDoc, deleteDoc };
+    </script>
 </head>
 <body>
 <div class="container">
@@ -152,20 +64,16 @@
         </div>
         <p id="loginError" style="color:red; font-size:13px;"></p>
         <button onclick="adminLogin()" style="max-width:200px; margin:15px auto; display:block;">🔓 Login</button>
-        <br>
-        <a href="index.html">Back to Portal</a>
+        <br><a href="index.html">Back to Portal</a>
     </div>
 
     <!-- ADMIN PANEL -->
     <div id="adminSection" style="display:none;">
-
-        <!-- Top bar -->
         <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap;">
             <h1 style="margin:0;">📋 Admin Panel</h1>
             <div style="display:flex; align-items:center; gap:15px;">
                 <div class="notification-bell" onclick="toggleNotifications()">
-                    🔔
-                    <span class="notif-count" id="notifCount">0</span>
+                    🔔 <span class="notif-count" id="notifCount">0</span>
                     <div class="notif-dropdown" id="notifDropdown">
                         <strong>🔔 New Submissions</strong><br>
                         <div id="notifList"><p style="color:#999;">No new notifications</p></div>
@@ -175,26 +83,15 @@
                 <button onclick="adminLogout()" style="background:#ff3b2f; width:auto; padding:8px 16px;">🔒 Logout</button>
             </div>
         </div>
-
         <hr>
 
         <!-- Stats -->
         <div style="display:flex; gap:15px; justify-content:center; flex-wrap:wrap; margin:15px 0;">
-            <div style="background:#ff914d; color:white; border-radius:15px; padding:15px 25px; font-size:16px; font-weight:bold; text-align:center;">
-                📁 Total<br><span id="totalCount" style="font-size:28px;">0</span>
-            </div>
-            <div style="background:#6b5b95; color:white; border-radius:15px; padding:15px 25px; font-size:16px; font-weight:bold; text-align:center;">
-                🔔 Unread<br><span id="unreadCount" style="font-size:28px;">0</span>
-            </div>
-            <div style="background:#28a745; color:white; border-radius:15px; padding:15px 25px; font-size:16px; font-weight:bold; text-align:center;">
-                ✅ Approved<br><span id="approvedCount" style="font-size:28px;">0</span>
-            </div>
-            <div style="background:#dc3545; color:white; border-radius:15px; padding:15px 25px; font-size:16px; font-weight:bold; text-align:center;">
-                ❌ Rejected<br><span id="rejectedCount" style="font-size:28px;">0</span>
-            </div>
-            <div style="background:#ffc107; color:white; border-radius:15px; padding:15px 25px; font-size:16px; font-weight:bold; text-align:center;">
-                ⏳ Pending<br><span id="pendingCount" style="font-size:28px;">0</span>
-            </div>
+            <div style="background:#ff914d; color:white; border-radius:15px; padding:15px 25px; text-align:center; font-weight:bold;">📁 Total<br><span id="totalCount" style="font-size:28px;">0</span></div>
+            <div style="background:#6b5b95; color:white; border-radius:15px; padding:15px 25px; text-align:center; font-weight:bold;">🔔 Unread<br><span id="unreadCount" style="font-size:28px;">0</span></div>
+            <div style="background:#28a745; color:white; border-radius:15px; padding:15px 25px; text-align:center; font-weight:bold;">✅ Approved<br><span id="approvedCount" style="font-size:28px;">0</span></div>
+            <div style="background:#dc3545; color:white; border-radius:15px; padding:15px 25px; text-align:center; font-weight:bold;">❌ Rejected<br><span id="rejectedCount" style="font-size:28px;">0</span></div>
+            <div style="background:#ffc107; color:white; border-radius:15px; padding:15px 25px; text-align:center; font-weight:bold;">⏳ Pending<br><span id="pendingCount" style="font-size:28px;">0</span></div>
         </div>
 
         <!-- Tabs -->
@@ -203,43 +100,26 @@
             <button class="tab-btn" onclick="switchTab('dashboard')" id="tab-dashboard">📊 Dashboard</button>
         </div>
 
-        <!-- DASHBOARD TAB -->
+        <!-- Dashboard -->
         <div id="dashboardTab" style="display:none;">
             <div class="chart-row">
-                <div class="chart-box">
-                    <h3 style="text-align:center; color:#ff914d;">By Department</h3>
-                    <canvas id="deptChart"></canvas>
-                </div>
-                <div class="chart-box">
-                    <h3 style="text-align:center; color:#ff914d;">By Class</h3>
-                    <canvas id="classChart"></canvas>
-                </div>
-                <div class="chart-box">
-                    <h3 style="text-align:center; color:#ff914d;">By Status</h3>
-                    <canvas id="statusChart"></canvas>
-                </div>
+                <div class="chart-box"><h3 style="text-align:center; color:#ff914d;">By Department</h3><canvas id="deptChart"></canvas></div>
+                <div class="chart-box"><h3 style="text-align:center; color:#ff914d;">By Class</h3><canvas id="classChart"></canvas></div>
+                <div class="chart-box"><h3 style="text-align:center; color:#ff914d;">By Status</h3><canvas id="statusChart"></canvas></div>
             </div>
         </div>
 
-        <!-- SUBMISSIONS TAB -->
+        <!-- Submissions -->
         <div id="submissionsTab">
-
-            <!-- Search & Filter -->
             <div class="search-bar">
-                <input type="text" id="searchInput" placeholder="🔍 Search by name or register no..." oninput="filterSubmissions()" style="flex:1; min-width:200px;">
+                <input type="text" id="searchInput" placeholder="🔍 Search name or regno..." oninput="filterSubmissions()" style="flex:1; min-width:200px;">
                 <select id="filterDept" onchange="filterSubmissions()">
                     <option value="">All Departments</option>
-                    <option>CSE</option>
-                    <option>CE</option>
-                    <option>EEE</option>
-                    <option>MECH</option>
+                    <option>CSE</option><option>CE</option><option>EEE</option><option>MECH</option>
                 </select>
                 <select id="filterClass" onchange="filterSubmissions()">
                     <option value="">All Classes</option>
-                    <option>Ⅰ Year</option>
-                    <option>II Year</option>
-                    <option>III Year</option>
-                    <option>IV Year</option>
+                    <option>Ⅰ Year</option><option>II Year</option><option>III Year</option><option>IV Year</option>
                 </select>
                 <select id="filterStatus" onchange="filterSubmissions()">
                     <option value="">All Status</option>
@@ -249,13 +129,11 @@
                 </select>
                 <button onclick="clearFilters()" style="background:#6b5b95; width:auto; padding:8px 14px;">🔄 Clear</button>
             </div>
-
             <p id="resultCount" style="color:#6b5b95; font-size:13px;"></p>
             <div id="output"></div>
         </div>
 
-        <br>
-        <a href="index.html">Back to Portal</a>
+        <br><a href="index.html">Back to Portal</a>
     </div>
 </div>
 
@@ -263,9 +141,7 @@
 var ADMIN_USERNAME = "admin";
 var ADMIN_PASSWORD = "carmel123";
 var allSubmissions = [];
-var deptChartInstance = null;
-var classChartInstance = null;
-var statusChartInstance = null;
+var deptChart, classChart, statusChart;
 
 function adminLogin() {
     var user = document.getElementById("adminUser").value.trim();
@@ -282,66 +158,77 @@ function adminLogout() {
     sessionStorage.removeItem("isAdmin");
     document.getElementById("adminSection").style.display = "none";
     document.getElementById("loginSection").style.display = "block";
-    document.getElementById("adminUser").value = "";
-    document.getElementById("adminPass").value = "";
 }
 
 function switchTab(tab) {
     document.getElementById("submissionsTab").style.display = tab === "submissions" ? "block" : "none";
-    document.getElementById("dashboardTab").style.display = tab === "dashboard" ? "block" : "none";
+    document.getElementById("dashboardTab").style.display   = tab === "dashboard"    ? "block" : "none";
     document.getElementById("tab-submissions").classList.toggle("active", tab === "submissions");
-    document.getElementById("tab-dashboard").classList.toggle("active", tab === "dashboard");
+    document.getElementById("tab-dashboard").classList.toggle("active",   tab === "dashboard");
     if (tab === "dashboard") renderCharts();
 }
 
-function showAdminPanel() {
+async function showAdminPanel() {
     document.getElementById("loginSection").style.display = "none";
     document.getElementById("adminSection").style.display = "block";
 
-    allSubmissions = JSON.parse(localStorage.getItem("submissions")) || [];
-    var readList = JSON.parse(localStorage.getItem("adminReadList")) || [];
+    try {
+        var { collection, getDocs } = window.firestoreModules;
+        var db = window.db;
+        var snapshot = await getDocs(collection(db, "submissions"));
 
-    // Stats
-    document.getElementById("totalCount").innerText = allSubmissions.length;
-    var unread = allSubmissions.filter(function(s) { return !readList.includes(s.regno + "_" + s.title); });
-    var approved = allSubmissions.filter(function(s) { return s.status === "approved"; });
-    var rejected = allSubmissions.filter(function(s) { return s.status === "rejected"; });
-    var pending = allSubmissions.filter(function(s) { return !s.status || s.status === "pending"; });
-
-    document.getElementById("unreadCount").innerText = unread.length;
-    document.getElementById("approvedCount").innerText = approved.length;
-    document.getElementById("rejectedCount").innerText = rejected.length;
-    document.getElementById("pendingCount").innerText = pending.length;
-
-    // Bell
-    var notifCountEl = document.getElementById("notifCount");
-    notifCountEl.style.display = unread.length > 0 ? "inline" : "none";
-    notifCountEl.innerText = unread.length;
-
-    // Notifications
-    var notifList = document.getElementById("notifList");
-    if (unread.length === 0) {
-        notifList.innerHTML = "<p style='color:#999;'>No new notifications</p>";
-    } else {
-        notifList.innerHTML = "";
-        unread.forEach(function(s) {
-            notifList.innerHTML += `
-                <div class="notif-item" onclick="scrollToCard('${s.regno}')">
-                    📌 <strong>${s.name}</strong> (${s.regno})<br>
-                    <span style="color:#ff914d;">${s.title}</span><br>
-                    <span style="color:#999; font-size:11px;">🏛️ ${s.dept} | ${s.class}</span>
-                </div>`;
+        allSubmissions = [];
+        snapshot.forEach(function(d) {
+            allSubmissions.push({ id: d.id, ...d.data() });
         });
-    }
 
-    renderSubmissions(allSubmissions.slice().reverse(), allSubmissions.length);
+        // Sort newest first
+        allSubmissions.sort(function(a, b) {
+            return new Date(b.timestamp) - new Date(a.timestamp);
+        });
+
+        var readList = JSON.parse(localStorage.getItem("adminReadList")) || [];
+        var unread   = allSubmissions.filter(function(s) { return !readList.includes(s.id); });
+        var approved = allSubmissions.filter(function(s) { return s.status === "approved"; });
+        var rejected = allSubmissions.filter(function(s) { return s.status === "rejected"; });
+        var pending  = allSubmissions.filter(function(s) { return !s.status || s.status === "pending"; });
+
+        document.getElementById("totalCount").innerText    = allSubmissions.length;
+        document.getElementById("unreadCount").innerText   = unread.length;
+        document.getElementById("approvedCount").innerText = approved.length;
+        document.getElementById("rejectedCount").innerText = rejected.length;
+        document.getElementById("pendingCount").innerText  = pending.length;
+
+        var notifCountEl = document.getElementById("notifCount");
+        notifCountEl.style.display = unread.length > 0 ? "inline" : "none";
+        notifCountEl.innerText = unread.length;
+
+        var notifList = document.getElementById("notifList");
+        if (unread.length === 0) {
+            notifList.innerHTML = "<p style='color:#999;'>No new notifications</p>";
+        } else {
+            notifList.innerHTML = "";
+            unread.forEach(function(s) {
+                notifList.innerHTML += `
+                    <div class="notif-item" onclick="scrollToCard('${s.id}')">
+                        📌 <strong>${s.name}</strong> (${s.regno})<br>
+                        <span style="color:#ff914d;">${s.title}</span><br>
+                        <span style="color:#999; font-size:11px;">🏛️ ${s.dept} | ${s.class}</span>
+                    </div>`;
+            });
+        }
+
+        renderSubmissions(allSubmissions);
+
+    } catch (err) {
+        document.getElementById("output").innerHTML = "<p style='color:red;'>Error loading: " + err.message + "</p>";
+    }
 }
 
-function renderSubmissions(list, totalCount) {
+function renderSubmissions(list) {
     var readList = JSON.parse(localStorage.getItem("adminReadList")) || [];
     var outputDiv = document.getElementById("output");
-    document.getElementById("resultCount").innerText =
-        "Showing " + list.length + " of " + totalCount + " submissions";
+    document.getElementById("resultCount").innerText = "Showing " + list.length + " of " + allSubmissions.length + " submissions";
 
     if (list.length === 0) {
         outputDiv.innerHTML = "<p style='color:#999;'>No submissions found.</p>";
@@ -350,15 +237,13 @@ function renderSubmissions(list, totalCount) {
 
     outputDiv.innerHTML = "";
     list.forEach(function(item, index) {
-        var key = item.regno + "_" + item.title;
-        var isNew = !readList.includes(key);
+        var isNew = !readList.includes(item.id);
         var status = item.status || "pending";
-        var statusLabel = status === "approved" ? "✅ Approved"
-                        : status === "rejected"  ? "❌ Rejected"
-                        : "⏳ Pending";
+        var statusLabel = status === "approved" ? "✅ Approved" : status === "rejected" ? "❌ Rejected" : "⏳ Pending";
+        var time = item.timestamp ? new Date(item.timestamp).toLocaleString() : "N/A";
 
         outputDiv.innerHTML += `
-            <div class="card" id="card_${item.regno}">
+            <div class="card" id="card_${item.id}">
                 ${isNew ? '<span class="badge">🆕 New</span>' : ''}
                 <span class="status-${status}" style="float:right;">${statusLabel}</span>
                 <p><strong>#${index + 1} &nbsp; ${item.name}</strong></p>
@@ -366,57 +251,50 @@ function renderSubmissions(list, totalCount) {
                 <p><strong>Class:</strong> ${item.class} &nbsp;|&nbsp; <strong>Dept:</strong> ${item.dept}</p>
                 <p><strong>Faculty:</strong> ${item.faculty}</p>
                 <p><strong>Project:</strong> ${item.title}</p>
+                <p><strong>📅 Submitted:</strong> ${time}</p>
                 ${item.isGroup ? `<p><strong>Group Members:</strong> ${item.groupMembers}</p>` : ""}
                 ${item.remark ? `<p><strong>📝 Remark:</strong> ${item.remark}</p>` : ""}
-                <p><strong>📎 File:</strong>
-                    <a href="${item.fileData}" download="${item.fileName}">⬇️ ${item.fileName}</a>
-                </p>
+                <p><strong>📎 File:</strong> <a href="${item.fileData}" download="${item.fileName}">⬇️ ${item.fileName}</a></p>
                 <p><strong>👁️ Preview:</strong></p>
                 ${
                     item.fileData.startsWith("data:image/")
-                    ? `<img src="${item.fileData}" style="max-width:100%; border-radius:10px; border:2px solid #ff914d; margin-top:5px;">`
+                    ? `<img src="${item.fileData}" style="max-width:100%; border-radius:10px; border:2px solid #ff914d;">`
                     : `<iframe src="${item.fileData}" style="width:100%; height:280px; border-radius:10px; border:2px solid #ff914d;" frameborder="0"></iframe>`
                 }
                 <br>
-                <!-- Remark input -->
-                <input type="text" class="remark-input" id="remark_${item.regno}"
-                    placeholder="Add remark (optional)..."
-                    value="${item.remark || ''}">
+                <input type="text" class="remark-input" id="remark_${item.id}" placeholder="Add remark..." value="${item.remark || ''}">
                 <br>
-                <!-- Action buttons -->
-                <button class="action-btn approve-btn" onclick="updateStatus('${item.regno}', '${item.title}', 'approved')">✅ Approve</button>
-                <button class="action-btn reject-btn"  onclick="updateStatus('${item.regno}', '${item.title}', 'rejected')">❌ Reject</button>
-                <button class="action-btn delete-btn"  onclick="deleteSubmission('${item.regno}', '${item.title}')">🗑️ Delete</button>
+                <button class="action-btn approve-btn" onclick="updateStatus('${item.id}', 'approved')">✅ Approve</button>
+                <button class="action-btn reject-btn"  onclick="updateStatus('${item.id}', 'rejected')">❌ Reject</button>
+                <button class="action-btn delete-btn"  onclick="deleteSubmission('${item.id}')">🗑️ Delete</button>
             </div>`;
     });
 }
 
-function updateStatus(regno, title, status) {
-    var submissions = JSON.parse(localStorage.getItem("submissions")) || [];
-    var remark = document.getElementById("remark_" + regno)
-                 ? document.getElementById("remark_" + regno).value : "";
-
-    for (var i = 0; i < submissions.length; i++) {
-        if (submissions[i].regno === regno && submissions[i].title === title) {
-            submissions[i].status = status;
-            submissions[i].remark = remark;
-            break;
-        }
+async function updateStatus(docId, status) {
+    try {
+        var { doc, updateDoc } = window.firestoreModules;
+        var db = window.db;
+        var remark = document.getElementById("remark_" + docId)?.value || "";
+        await updateDoc(doc(db, "submissions", docId), { status, remark });
+        alert((status === "approved" ? "✅ Approved!" : "❌ Rejected!"));
+        showAdminPanel();
+    } catch (err) {
+        alert("Error: " + err.message);
     }
-    localStorage.setItem("submissions", JSON.stringify(submissions));
-    alert((status === "approved" ? "✅ Approved!" : "❌ Rejected!") + " Status updated for " + regno);
-    showAdminPanel();
 }
 
-function deleteSubmission(regno, title) {
-    if (!confirm("Delete submission for " + regno + "? This cannot be undone!")) return;
-    var submissions = JSON.parse(localStorage.getItem("submissions")) || [];
-    submissions = submissions.filter(function(s) {
-        return !(s.regno === regno && s.title === title);
-    });
-    localStorage.setItem("submissions", JSON.stringify(submissions));
-    alert("🗑️ Submission deleted!");
-    showAdminPanel();
+async function deleteSubmission(docId) {
+    if (!confirm("Delete this submission? Cannot be undone!")) return;
+    try {
+        var { doc, deleteDoc } = window.firestoreModules;
+        var db = window.db;
+        await deleteDoc(doc(db, "submissions", docId));
+        alert("🗑️ Deleted!");
+        showAdminPanel();
+    } catch (err) {
+        alert("Error: " + err.message);
+    }
 }
 
 function filterSubmissions() {
@@ -426,14 +304,12 @@ function filterSubmissions() {
     var status = document.getElementById("filterStatus").value;
 
     var filtered = allSubmissions.filter(function(s) {
-        var matchSearch = s.name.toLowerCase().includes(search) || s.regno.toLowerCase().includes(search);
-        var matchDept   = dept   === "" || s.dept  === dept;
-        var matchClass  = cls    === "" || s.class === cls;
-        var matchStatus = status === "" || (s.status || "pending") === status;
-        return matchSearch && matchDept && matchClass && matchStatus;
+        return (s.name.toLowerCase().includes(search) || s.regno.toLowerCase().includes(search))
+            && (dept   === "" || s.dept  === dept)
+            && (cls    === "" || s.class === cls)
+            && (status === "" || (s.status || "pending") === status);
     });
-
-    renderSubmissions(filtered.slice().reverse(), allSubmissions.length);
+    renderSubmissions(filtered);
 }
 
 function clearFilters() {
@@ -443,90 +319,58 @@ function clearFilters() {
     document.getElementById("filterStatus").value = "";
     filterSubmissions();
 }
-function renderCharts() {
-    var submissions = JSON.parse(localStorage.getItem("submissions")) || [];
 
-    // Dept chart
-    var depts = {};
-    submissions.forEach(function(s) { depts[s.dept] = (depts[s.dept] || 0) + 1; });
-    if (deptChartInstance) deptChartInstance.destroy();
-    deptChartInstance = new Chart(document.getElementById("deptChart"), {
+function renderCharts() {
+    var depts = {}, classes = {};
+    var approved = 0, rejected = 0, pending = 0;
+
+    allSubmissions.forEach(function(s) {
+        depts[s.dept]    = (depts[s.dept]    || 0) + 1;
+        classes[s.class] = (classes[s.class] || 0) + 1;
+        if (s.status === "approved")      approved++;
+        else if (s.status === "rejected") rejected++;
+        else                              pending++;
+    });
+
+    if (deptChart)   deptChart.destroy();
+    if (classChart)  classChart.destroy();
+    if (statusChart) statusChart.destroy();
+
+    deptChart = new Chart(document.getElementById("deptChart"), {
         type: "bar",
-        data: {
-            labels: Object.keys(depts),
-            datasets: [{ label: "Submissions", data: Object.values(depts),
-                backgroundColor: ["#ff914d","#6b5b95","#ff6f61","#28a745"] }]
-        },
+        data: { labels: Object.keys(depts), datasets: [{ label: "Submissions", data: Object.values(depts), backgroundColor: ["#ff914d","#6b5b95","#ff6f61","#28a745"] }] },
         options: { plugins: { legend: { display: false } } }
     });
-
-    // Class chart
-    var classes = {};
-    submissions.forEach(function(s) { classes[s.class] = (classes[s.class] || 0) + 1; });
-    if (classChartInstance) classChartInstance.destroy();
-    classChartInstance = new Chart(document.getElementById("classChart"), {
+    classChart = new Chart(document.getElementById("classChart"), {
         type: "doughnut",
-        data: {
-            labels: Object.keys(classes),
-            datasets: [{ data: Object.values(classes),
-                backgroundColor: ["#ff914d","#6b5b95","#ff6f61","#ffc107"] }]
-        }
+        data: { labels: Object.keys(classes), datasets: [{ data: Object.values(classes), backgroundColor: ["#ff914d","#6b5b95","#ff6f61","#ffc107"] }] }
     });
-
-    // Status chart
-    var approved = submissions.filter(function(s) { return s.status === "approved"; }).length;
-    var rejected = submissions.filter(function(s) { return s.status === "rejected"; }).length;
-    var pending  = submissions.filter(function(s) { return !s.status || s.status === "pending"; }).length;
-    if (statusChartInstance) statusChartInstance.destroy();
-    statusChartInstance = new Chart(document.getElementById("statusChart"), {
+    statusChart = new Chart(document.getElementById("statusChart"), {
         type: "pie",
-        data: {
-            labels: ["Approved", "Rejected", "Pending"],
-            datasets: [{ data: [approved, rejected, pending],
-                backgroundColor: ["#28a745","#dc3545","#ffc107"] }]
-        }
+        data: { labels: ["Approved","Rejected","Pending"], datasets: [{ data: [approved, rejected, pending], backgroundColor: ["#28a745","#dc3545","#ffc107"] }] }
     });
 }
 
 function toggleNotifications() {
-    var dropdown = document.getElementById("notifDropdown");
-    dropdown.style.display = dropdown.style.display === "block" ? "none" : "block";
+    var d = document.getElementById("notifDropdown");
+    d.style.display = d.style.display === "block" ? "none" : "block";
 }
 
 function clearNotifications(event) {
     event.stopPropagation();
-    var submissions = JSON.parse(localStorage.getItem("submissions")) || [];
-    var readList = submissions.map(function(s) { return s.regno + "_" + s.title; });
+    var readList = allSubmissions.map(function(s) { return s.id; });
     localStorage.setItem("adminReadList", JSON.stringify(readList));
     document.getElementById("notifCount").style.display = "none";
     document.getElementById("unreadCount").innerText = "0";
-    document.getElementById("notifList").innerHTML = "<p style='color:#999;'>No new notifications</p>";
     document.getElementById("notifDropdown").style.display = "none";
     showAdminPanel();
 }
 
-function scrollToCard(regno) {
-    var card = document.getElementById("card_" + regno);
+function scrollToCard(id) {
+    var card = document.getElementById("card_" + id);
     if (card) {
         card.scrollIntoView({ behavior: "smooth" });
         card.style.border = "3px solid #ff3b2f";
         setTimeout(function() { card.style.border = "2px solid #ff914d"; }, 2000);
     }
-    document.getElementById("notifDropdown").style.display = "none";
-}
-
-document.addEventListener("click", function(e) {
-    var dropdown = document.getElementById("notifDropdown");
-    if (dropdown && !dropdown.contains(e.target)) {
-        dropdown.style.display = "none";
-    }
-});
-
-if (sessionStorage.getItem("isAdmin") === "true") showAdminPanel();
-
-setInterval(function() {
-    if (sessionStorage.getItem("isAdmin") === "true") showAdminPanel();
-}, 30000);
-</script>
-</body>
-</html>
+    document.getElementById("notif
